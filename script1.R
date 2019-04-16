@@ -1,20 +1,17 @@
-#Script de la pimera part de la practica 
-#Autors: José Antonio Cegarra Alonso 1461305
-#Autors: Juan Manuel Vallecillos Calzado 1401596
+# Script de la pimera part de la practica 
+# Autors: José Antonio Cegarra Alonso 1461305
+# Autors: Juan Manuel Vallecillos Calzado 1401596
 
-#instal·lació de paquets
+# Instal·lació de paquets
 install.packages("sdcMicro")
-install.packages("dplyr")
 
-#Carrega de les llibreries
+# Carrega de les llibreries
 library(sdcMicro)
-library(plyr)
-library(dplyr)
 
-#Carregar les dades (Compte amb el path, en windows es diferent)
+# Carregar les dades (Compte amb el path, en windows es diferent)
 dades <- read.csv(file = "~/UNIVERSIDAD/3r Curso/2Semestre/GIS/Practica/Practica2/GIS/data/salaris.csv", header=TRUE, sep=",", colClasses = c("CP"="character"))
 
-#Mostra de les dades
+# Mostra de les dades
 colnames(dades)
 head(dades)
 summary(dades)
@@ -31,20 +28,46 @@ plot(sort(dades[, "Edat"]), type="p", col="red", xlab="Registres", ylab="Valor",
 # Creem un subset de dades eliminant els identificadors (DNI i nombre de la SS)
 dades_subset = dades[,c(3,4,5)]
 
-#Creem un subset amb la frequencia del CP
-dades_CP_freq = plyr::count(dades_subset, 'CP')
+# Trobem la freqüència per el CP per saber si hi ha algún individu que es pot identificar de manera única 
+dades_CP_freq = table(dades_subset$CP)
 
-#Creem un subset amb la frequencia de l'edat
-dades_Edat_freq = plyr::count(dades_subset, 'Edat')
+# Trobem la freqüència per l'Edat per saber si hi ha algún individu que es pot identificar de manera única 
+dades_Edat_freq = table(dades_subset$Edat)
 
-#Creem un subset amb la frequencia del salari
-dades_Salari_freq = plyr::count(dades_subset, 'Salari')
+# Trobem la freqüència per el Salari per saber si hi ha algún individu que es pot identificar de manera única 
+dades_Salari_freq = table(dades_subset$Salari)
 
-#Creem un subset amb els valors únics del CP
-dades_unique_CP = dplyr::filter(dades_CP_freq, freq == "1")
+# Trobem la freqüència per a la combinació CP-Edat per saber si hi ha algún individu que es pot identificar de manera única 
+dades_CP_Edat_freq = table(dades_subset$CP,dades_subset$Edat)
 
-#Creem un subset amb els valors únics de l'Edat
-dades_unique_Edat = dplyr::filter(dades_Edat_freq, freq == "1")
+# Trobem la freqüència per a la combinació Edat-Salari per saber si hi ha algún individu que es pot identificar de manera única 
+dades_Edat_Salari_freq = table(dades_subset$Edat,dades_subset$Salari)
 
-#Creem un subset amb els valors únics del Salari
-dades_unique_Salari = dplyr::filter(dades_Salari_freq, freq == "1")
+# Trobem la freqüència per a la combinació CP-Salari per saber si hi ha algún individu que es pot identificar de manera única 
+dades_CP_Salari_freq = table(dades_subset$CP,dades_subset$Salari)
+
+# Trobem la freqüència per a la combinació CP-Edat-Salari per saber si hi ha algún individu que es pot identificar de manera única 
+dades_CP_Edat_Salari_freq = table(dades_subset$CP,dades_subset$Edat,dades_subset$Salari)
+
+# Comprovem que el valor 1 aparegui en les taules generades. Si apareix printem un missatge perr informar que es pot identificar de manera única 
+if('1' %in% dades_CP_freq) {
+  print("A la taula dades_CP_freq hi ha un individu que es pot identificar")
+}
+if('1' %in% dades_Edat_freq) {
+  print("A la taula dades_Edat_freq hi ha un individu que es pot identificar")
+}
+if ('1' %in% dades_Salari_freq) {
+  print("A la taula dades_Salari_freq hi ha un individu que es pot identificar")
+}
+if ('1' %in% dades_CP_Edat_freq) {
+  print("A la taula dades_CP_Edat_freq hi ha un individu que es pot identificar")
+}
+if ('1' %in% dades_Edat_Salari_freq) {
+  print("A la taula dades_Edat_Salari_freq hi ha un individu que es pot identificar")
+}
+if ('1' %in% dades_CP_Salari_freq) {
+  print("A la taula dades_CP_Salari_freq hi ha un individu que es pot identificar")
+}
+if ('1' %in% dades_CP_Edat_Salari_freq) {
+  print("A la taula dades_CP_Edat_Salari_freq hi ha un individu que es pot identificar")
+}
