@@ -71,3 +71,28 @@ if ('1' %in% dades_CP_Salari_freq) {
 if ('1' %in% dades_CP_Edat_Salari_freq) {
   print("A la taula dades_CP_Edat_Salari_freq hi ha un individu que es pot identificar")
 }
+
+# Afegim soroll en el camp Edat
+edat_soroll <- addNoise(dades_subset,'Edat',20)
+# Copiem els camps salari i CP al nou data frame dades.an
+dades.an = dades_subset[,c(1,3)]
+# Afegim la columna Edat amb el soroll
+dades.an$Edat <- edat_soroll$xm
+
+# Apartat 3b
+plot(cbind(dades$Edat, dades.an$Edat),
+      ylim=c(min(dades$Edat),max(dades$Edat)),
+      xlim=c(min(dades$Edat),max(dades$Edat)),
+      xlab="Original", ylab="Masked", main="Additive Noise - Edat (P=0.20)")
+abline(a=0, b=1, col="red")
+
+# Fem el rank swap en el camp Edat
+dades.rs <- rankSwap(dades_subset,'Edat',P=10)
+
+# Apartat 4b
+plot(cbind(dades$Edat, dades.rs$Edat),
+     ylim=c(min(dades$Edat),max(dades$Edat)),
+     xlim=c(min(dades$Edat),max(dades$Edat)),
+     xlab="Original", ylab="Masked", main="Rank Swapping - Edat (P=0.10)")
+abline(a=0, b=1, col="red")
+
