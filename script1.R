@@ -96,3 +96,16 @@ plot(cbind(dades$Edat, dades.rs$Edat),
      xlab="Original", ylab="Masked", main="Rank Swapping - Edat (P=0.10)")
 abline(a=0, b=1, col="red")
 
+# Pèrdua de informació per soroll aditiu 
+# Preguntar: dUtility(obj=dades_subset[2], xm=dades.an$Edat)
+dUtility(obj=dades_subset[2], xm=dades.an[3])
+
+# Pèrdua de informació per rank swapping
+dUtility(obj = dades_subset[2], xm=dades.rs[2])
+
+# Risc de privacitat per a additive noise
+dRisk(obj = dades_subset[2], xm=dades.an[3])
+
+# Risc de privacitat per a rank swapping
+dRisk(obj = dades_subset[2], xm=dades.rs[2])
+
