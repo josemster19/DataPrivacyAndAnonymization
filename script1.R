@@ -108,3 +108,47 @@ dRisk(obj = dades_subset[2], xm=dades.an[3])
 # Risc de privacitat per a rank swapping
 dRisk(obj = dades_subset[2], xm=dades.rs[2])
 
+# Afegim la microagregacio univariant
+microa <- microaggregation(dades_subset[,c('Edat','Salari')],aggr = 3, method = "onedims")
+
+par(mfrow=c(2,2)) 
+
+# Creem els 4 histogrames
+hist(microa$x$Edat, main="Histograma Edat original",xlab="Edat",ylab="Freqüència")
+hist(microa$mx$Edat, main="Histograma Edat amb microagregació",xlab="Edat",ylab="Freqüència")
+hist(microa$x$Salari, main="Histograma Salari original",xlab="Salari",ylab="Freqüència")
+hist(microa$mx$Salari, main="Histograma Salari amb microagregació",xlab="Salari",ylab="Freqüència")
+
+# Afegim la microagrecacio multivariant
+microa_mv <- microaggregation(dades_subset[,c('Edat','Salari')],aggr = 3, method = "mdav")
+
+# Comparació dels 4 histogrames univariants i multivariants
+hist(microa$mx$Edat, main="Histograma Edat univariant",xlab="Edat",ylab="Freqüència")
+hist(microa_mv$mx$Edat, main="Histograma Edat multivariant",xlab="Edat",ylab="Freqüència")
+hist(microa$mx$Salari, main="Histograma Salari univariant",xlab="Salari",ylab="Freqüència")
+hist(microa_mv$mx$Salari, main="Histograma Salari multivariant",xlab="Salari",ylab="Freqüència")
+
+# Calcul de la utilitat per a l'edat univariant
+dUtility(obj=dades_subset[2], xm=microa$mx[1])
+
+# Multivariant
+dUtility(obj=dades_subset[2], xm=microa_mv$mx[1])
+
+# Calcul de la utilitat per al salari univariant
+dUtility(obj=dades_subset[3], xm=microa$mx[2])
+
+# Multivariant
+dUtility(obj=dades_subset[3], xm=microa_mv$mx[2])
+
+# Calcul del risc de privacitat per a l'edat univariant
+dRisk(obj = dades_subset[2], xm=microa$mx[1])
+
+# Multivariant
+dRisk(obj = dades_subset[2], xm=microa_mv$mx[1])
+
+# Calcul del risc de privacitat per al salari univariant
+dRisk(obj = dades_subset[3], xm=microa$mx[2])
+
+# Multivariant
+dRisk(obj = dades_subset[3], xm=microa_mv$mx[2])
+
