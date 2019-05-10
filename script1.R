@@ -152,3 +152,53 @@ dRisk(obj = dades_subset[3], xm=microa$mx[2])
 # Multivariant
 dRisk(obj = dades_subset[3], xm=microa_mv$mx[2])
 
+# Creacio d'una funcio per generalitzar el codi postal l'input a de ser una String
+ProvinciaCP <- function(CP) {
+  CP = substr(CP,1,2)
+  padding = "000"
+  CP = paste(CP,padding,sep="")
+  return (CP)
+}
+
+# Creem un nou data frame i generalitzem el CP
+CPGeneralitzat <- dades_subset[,c(2,3)]
+CPGeneralitzat$CP=ProvinciaCP(dades_subset$CP)
+
+# Creem la funció d'abans pero modificada per si hi ha un registre únic camuflarlo
+ProvinciaCPValorsUnics <- function(CP) {
+  counter = 1
+  for(CPindv in CP){
+    if('1' %in% dades_CP_freq[CPindv]){
+      CP[counter] = ProvinciaCP(CPindv)
+    }
+    counter= counter + 1
+  }
+  return (CP)
+}
+
+# Creem un nou data frame i generalitzem el CP
+CPGeneralitzatValorsUnics <- dades_subset[,c(2,3)]
+CPGeneralitzatValorsUnics$CP=ProvinciaCPValorsUnics(dades_subset$CP)
+
+#Exercici 9
+names <- c("AN", "RS", "MA one", "MA mul")
+colors <- c("grey", "red", "blue", "green")
+lty <- 1:4
+lwd <- 3
+
+dif_an <- abs(dades[, 'Edat']-dades.an[, 'Edat'])
+dif_rs <- abs(dades[, 'Edat']-dades.rs[, 'Edat'])
+dif_ma_one <- abs(dades[, 'Edat']-microa$mx[, 'Edat'])
+dif_ma_mul <- abs(dades[, 'Edat']-microa_mv$mx[, 'Edat'])
+
+ymin <- min(dif_an, dif_rs, dif_ma_one, dif_ma_mul)
+ymax <- max(dif_an, dif_rs, dif_ma_one, dif_ma_mul)
+
+par(mfrow=c(1,1))
+plot(sort(dif_an), type="l", col=colors[1], lty=lty[1], lwd=lwd, ylim=c(ymin,ymax), xlab="
+Registers", ylab="Error", main="Edat")
+lines(sort(dif_rs), col=colors[2], lty=lty[2], lwd=lwd)
+lines(sort(dif_ma_one), col=colors[3], lty=lty[3], lwd=lwd)
+lines(sort(dif_ma_mul), col=colors[4], lty=lty[4], lwd=lwd)
+legend(x="topleft", legend=names, col=colors, lty=lty, lwd=lwd)
+
