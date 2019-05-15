@@ -83,3 +83,19 @@ GeneralitzarOcupacio <- function(Ocupacio) {
 
 CPGeneralitzat$Ocupacio = GeneralitzarOcupacio(CPGeneralitzat$Ocupacio)
 
+# Afegim soroll en el Prob
+prob_soroll <- addNoise(CPGeneralitzat,'Prob',15)
+# ACtualitzem el CPGeneralitzat amb el soroll que hem afegit
+# TODO Corregir q hay valores > 1
+CPGeneralitzat$Prob <- prob_soroll$xm
+
+# Fem rank swapping amb l'edat
+CPGeneralitzat <- rankSwap(CPGeneralitzat,'Edat',P=10)
+# Fem micro-agregacio amb edat i salari
+microa <- microaggregation(CPGeneralitzat[,c('Edat','Salari')],aggr = 3, method = "onedims")
+CPGeneralitzat$Edat = microa$mx$Edat
+CPGeneralitzat$Salari = microa$mx$Salari
+# Fem micro-agregacio amb nivell d'estudis i fills
+microa2 <- microaggregation(CPGeneralitzat[,c('NumFills','NivellEstudis')],aggr = 3, method = "mdav")
+CPGeneralitzat$NumFills = microa2$mx$NumFills
+CPGeneralitzat$NivellEstudis = microa2$mx$NivellEstudis
