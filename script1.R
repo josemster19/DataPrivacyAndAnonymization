@@ -27,6 +27,8 @@ plot(sort(dades[, "Edat"]), type="p", col="red", xlab="Registres", ylab="Valor",
 
 # Creem un subset de dades eliminant els identificadors (DNI i nombre de la SS)
 dades_subset = dades[,c(3,4,5)]
+dades_subset_comparar = dades_subset
+dades_subset_comparar$CP = as.numeric(dades_subset_comparar$CP)
 
 # Trobem la freqüència per el CP per saber si hi ha algún individu que es pot identificar de manera única 
 dades_CP_freq = table(dades_subset$CP)
@@ -73,9 +75,9 @@ if ('1' %in% dades_CP_Edat_Salari_freq) {
 }
 
 # Afegim soroll en el camp Edat
-edat_soroll <- addNoise(dades_subset,'Edat',20)
+edat_soroll <- addNoise(dades_subset_comparar,'Edat',20)
 # Copiem els camps salari i CP al nou data frame dades.an
-dades.an = dades_subset[,c(1,3)]
+dades.an = dades_subset_comparar[,c(1,3)]
 # Afegim la columna Edat amb el soroll
 dades.an$Edat <- edat_soroll$xm
 
@@ -87,7 +89,7 @@ plot(cbind(dades$Edat, dades.an$Edat),
 abline(a=0, b=1, col="red")
 
 # Fem el rank swap en el camp Edat
-dades.rs <- rankSwap(dades_subset,'Edat',P=10)
+dades.rs <- rankSwap(dades_subset_comparar,'Edat',P=10)
 
 # Apartat 4b
 plot(cbind(dades$Edat, dades.rs$Edat),
@@ -97,20 +99,20 @@ plot(cbind(dades$Edat, dades.rs$Edat),
 abline(a=0, b=1, col="red")
 
 # Pèrdua de informació per soroll aditiu 
-dUtility(obj=dades_subset, xm=dades.an)
+dUtility(obj=dades_subset_comparar, xm=dades.an)
 
 # Pèrdua de informació per rank swapping
-dUtility(obj = dades_subset[2], xm=dades.rs[2])
+dUtility(obj = dades_subset_comparar, xm=dades.rs)
 
 # Risc de privacitat per a additive noise
-dRisk(obj = dades_subset[2], xm=dades.an[3])
+dRisk(obj = dades_subset_comparar, xm=dades.an)
 
 # Risc de privacitat per a rank swapping
-dRisk(obj = dades_subset[2], xm=dades.rs[2])
+dRisk(obj = dades_subset_comparar, xm=dades.rs)
 
 # Afegim la microagregacio univariant
-microa <- microaggregation(dades_subset[,c('Edat','Salari')],aggr = 3, method = "onedims")
-
+microa <- microaggregation(obj=dades_subset_comparar, variables = c("Edat","Salari") , aggr = 3, method = "onedims")
+microa$mx$CP = dades_subset_comparar$CP
 par(mfrow=c(2,2)) 
 
 # Creem els 4 histogrames
@@ -120,7 +122,8 @@ hist(microa$x$Salari, main="Histograma Salari original",xlab="Salari",ylab="Freq
 hist(microa$mx$Salari, main="Histograma Salari amb microagregació",xlab="Salari",ylab="Freqüència")
 
 # Afegim la microagrecacio multivariant
-microa_mv <- microaggregation(dades_subset[,c('Edat','Salari')],aggr = 3, method = "mdav")
+microa_mv <- microaggregation(obj=dades_subset_comparar, variables = c('Edat','Salari'),aggr = 3, method = "mdav")
+microa_mv$mx$CP <- dades_subset_comparar$CP
 
 # Comparació dels 4 histogrames univariants i multivariants
 hist(microa$mx$Edat, main="Histograma Edat univariant",xlab="Edat",ylab="Freqüència")
@@ -129,28 +132,28 @@ hist(microa$mx$Salari, main="Histograma Salari univariant",xlab="Salari",ylab="F
 hist(microa_mv$mx$Salari, main="Histograma Salari multivariant",xlab="Salari",ylab="Freqüència")
 
 # Calcul de la utilitat per a l'edat univariant
-dUtility(obj=dades_subset[2], xm=microa$mx[1])
+dUtility(obj=dades_subset_comparar, xm=microa$mx)
 
 # Multivariant
-dUtility(obj=dades_subset[2], xm=microa_mv$mx[1])
+dUtility(obj=dades_subset_comparar, xm=microa_mv$mx)
 
 # Calcul de la utilitat per al salari univariant
-dUtility(obj=dades_subset[3], xm=microa$mx[2])
+dUtility(obj=dades_subset_comparar, xm=microa$mx)
 
 # Multivariant
-dUtility(obj=dades_subset[3], xm=microa_mv$mx[2])
+dUtility(obj=dades_subset_comparar, xm=microa_mv$mx)
 
 # Calcul del risc de privacitat per a l'edat univariant
-dRisk(obj = dades_subset[2], xm=microa$mx[1])
+dRisk(obj = dades_subset_comparar, xm=microa$mx)
 
 # Multivariant
-dRisk(obj = dades_subset[2], xm=microa_mv$mx[1])
+dRisk(obj = dades_subset_comparar, xm=microa_mv$mx)
 
 # Calcul del risc de privacitat per al salari univariant
-dRisk(obj = dades_subset[3], xm=microa$mx[2])
+dRisk(obj = dades_subset_comparar, xm=microa$mx)
 
 # Multivariant
-dRisk(obj = dades_subset[3], xm=microa_mv$mx[2])
+dRisk(obj = dades_subset_comparar, xm=microa_mv$mx)
 
 # Creacio d'una funcio per generalitzar el codi postal l'input a de ser una String
 ProvinciaCP <- function(CP) {

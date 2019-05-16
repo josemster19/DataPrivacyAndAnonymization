@@ -13,8 +13,8 @@ dades <- read.csv(file = "~/UNIVERSIDAD/3r Curso/2Semestre/GIS/Practica/Practica
 
 # Apartat b
 # Primer eliminem els identificadors
-dades_subset = dades[,c(2,4,5,6,7,8,9,10)]
-
+dades_subset_nopertorb = dades[,c(2,4,5,6,7,8,9,10)]
+dades_subset_nopertorb$CP = as.numeric(dades_subset_nopertorb$CP)
 # Generalitzem el CP
 
 ProvinciaCP <- function(CP) {
@@ -25,8 +25,9 @@ ProvinciaCP <- function(CP) {
 }
 
 # Creem un nou data frame i generalitzem el CP
-CPGeneralitzat <- dades_subset
-CPGeneralitzat$CP=ProvinciaCP(dades_subset$CP)
+dades_subset_pertorb <- dades_subset_nopertorb
+dades_subset_pertorb$CP=ProvinciaCP(dades_subset_nopertorb$CP)
+dades_subset_pertorb$CP=as.numeric(dades_subset_pertorb$CP)
 
 
 # Clasifiquem els treballs en branques
@@ -34,46 +35,46 @@ GeneralitzarOcupacio <- function(Ocupacio) {
   counter = 1
   value <- c()
   for(Oindv in Ocupacio){
-    if(Oindv == levels(CPGeneralitzat$Ocupacio)[1]){
+    if(Oindv == levels(dades_subset_pertorb$Ocupacio)[1]){
       value = append(value,"Informàtic")
     }
-    if(Oindv == levels(CPGeneralitzat$Ocupacio)[2]){
+    if(Oindv == levels(dades_subset_pertorb$Ocupacio)[2]){
       value = append(value,"Informàtic")
     }
-    if(Oindv == levels(CPGeneralitzat$Ocupacio)[3]){
+    if(Oindv == levels(dades_subset_pertorb$Ocupacio)[3]){
       value = append(value,"Tècnic")
     }
-    if(Oindv == levels(CPGeneralitzat$Ocupacio)[4]){
+    if(Oindv == levels(dades_subset_pertorb$Ocupacio)[4]){
       value = append(value,"Tècnic")
     }
-    if(Oindv == levels(CPGeneralitzat$Ocupacio)[5]){
+    if(Oindv == levels(dades_subset_pertorb$Ocupacio)[5]){
       value = append(value,"Medicina")
     }
-    if(Oindv == levels(CPGeneralitzat$Ocupacio)[6]){
+    if(Oindv == levels(dades_subset_pertorb$Ocupacio)[6]){
       value = append(value,"Medicina")
     }
-    if(Oindv == levels(CPGeneralitzat$Ocupacio)[7]){
+    if(Oindv == levels(dades_subset_pertorb$Ocupacio)[7]){
       value = append(value,"Informàtic")
     }
-    if(Oindv == levels(CPGeneralitzat$Ocupacio)[8]){
+    if(Oindv == levels(dades_subset_pertorb$Ocupacio)[8]){
       value = append(value,"Tècnic")
     }
-    if(Oindv == levels(CPGeneralitzat$Ocupacio)[9]){
+    if(Oindv == levels(dades_subset_pertorb$Ocupacio)[9]){
       value = append(value,"Mecànic")
     }
-    if(Oindv == levels(CPGeneralitzat$Ocupacio)[10]){
+    if(Oindv == levels(dades_subset_pertorb$Ocupacio)[10]){
       value = append(value,"Mecànic")
     }
-    if(Oindv == levels(CPGeneralitzat$Ocupacio)[11]){
+    if(Oindv == levels(dades_subset_pertorb$Ocupacio)[11]){
       value = append(value,"Mecànic")
     }
-    if(Oindv == levels(CPGeneralitzat$Ocupacio)[12]){
+    if(Oindv == levels(dades_subset_pertorb$Ocupacio)[12]){
       value = append(value,"Medicina")
     }
-    if(Oindv == levels(CPGeneralitzat$Ocupacio)[13]){
+    if(Oindv == levels(dades_subset_pertorb$Ocupacio)[13]){
       value = append(value,"Informàtic")
     }
-    if(Oindv == levels(CPGeneralitzat$Ocupacio)[14]){
+    if(Oindv == levels(dades_subset_pertorb$Ocupacio)[14]){
       value = append(value,"Tècnic")
     }
     counter= counter + 1
@@ -81,21 +82,19 @@ GeneralitzarOcupacio <- function(Ocupacio) {
   return (value)
 }
 
-CPGeneralitzat$Ocupacio = GeneralitzarOcupacio(CPGeneralitzat$Ocupacio)
+dades_subset_pertorb$Ocupacio = GeneralitzarOcupacio(dades_subset_pertorb$Ocupacio)
 
-# Afegim soroll en el Prob
-prob_soroll <- addNoise(CPGeneralitzat,'Prob',15)
-# ACtualitzem el CPGeneralitzat amb el soroll que hem afegit
-# TODO Corregir q hay valores > 1
-CPGeneralitzat$Prob <- prob_soroll$xm
+#NO TOCAR LA PROB DE HIPOTECA, ES LO PRINCIPAL DE ESTE DATA SET E INTERESA QUE SEA UN DATO VERIDICO
+#TODO MICROAGREGACION CON LOS HIJOS Y NIVEL DE ESTUDIOS
 
 # Fem rank swapping amb l'edat
-CPGeneralitzat <- rankSwap(CPGeneralitzat,'Edat',P=10)
-# Fem micro-agregacio amb edat i salari
-microa <- microaggregation(CPGeneralitzat[,c('Edat','Salari')],aggr = 3, method = "onedims")
-CPGeneralitzat$Edat = microa$mx$Edat
-CPGeneralitzat$Salari = microa$mx$Salari
-# Fem micro-agregacio amb nivell d'estudis i fills
-microa2 <- microaggregation(CPGeneralitzat[,c('NumFills','NivellEstudis')],aggr = 3, method = "mdav")
-CPGeneralitzat$NumFills = microa2$mx$NumFills
-CPGeneralitzat$NivellEstudis = microa2$mx$NivellEstudis
+dades_subset_pertorb <- rankSwap(dades_subset_pertorb,'Edat',P=10)
+# Afegim soroll al salari
+sou_soroll <- addNoise(dades_subset_pertorb,'Salari',5)
+dades_subset_pertorb$Salari = sou_soroll$xm
+
+# Calcul de la utilitat extraer valores no numericos
+dades_subset_nopertorb_nonumeric <-dades_subset_nopertorb[,c(2,3,4,5,7,8)]
+dades_subset_pertorb_nonumeric <-dades_subset_pertorb[,c(2,3,4,5,7,8)]
+dUtility(obj=dades_subset_nopertorb_nonumeric, xm=dades_subset_pertorb_nonumeric)
+dRisk(obj=dades_subset_pertorb_nonumeric, xm=dades_subset_pertorb_nonumeric)
