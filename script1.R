@@ -97,7 +97,7 @@ plot(cbind(dades$Edat, dades.rs$Edat),
 abline(a=0, b=1, col="red")
 
 # Pèrdua de informació per soroll aditiu 
-dUtility(obj=dades_subset[2], xm=dades.an[3])
+dUtility(obj=dades_subset, xm=dades.an)
 
 # Pèrdua de informació per rank swapping
 dUtility(obj = dades_subset[2], xm=dades.rs[2])
