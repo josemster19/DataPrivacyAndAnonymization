@@ -79,7 +79,7 @@ edat_soroll <- addNoise(dades_subset_comparar,'Edat',20)
 # Copiem els camps salari i CP al nou data frame dades.an
 dades.an = dades_subset_comparar[,c(1,3)]
 # Afegim la columna Edat amb el soroll
-dades.an$Edat <- edat_soroll$xm
+dades.an$Edat <- round(edat_soroll$xm)
 
 # Apartat 3b
 plot(cbind(dades$Edat, dades.an$Edat),
