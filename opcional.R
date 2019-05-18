@@ -14,9 +14,8 @@ dades <- read.csv(file = "~/UNIVERSIDAD/3r Curso/2Semestre/GIS/Practica/Practica
 # Apartat b
 # Primer eliminem els identificadors
 dades_subset_nopertorb = dades[,c(2,4,5,6,7,8,9,10)]
-dades_subset_nopertorb$CP = as.numeric(dades_subset_nopertorb$CP)
-# Generalitzem el CP
 
+# Generalitzem el CP
 ProvinciaCP <- function(CP) {
   CP = substr(CP,1,2)
   padding = "000"
@@ -25,7 +24,6 @@ ProvinciaCP <- function(CP) {
 }
 
 # Creem un nou data frame i generalitzem el CP
-dades_subset_pertorb <- dades_subset_nopertorb
 dades_subset_pertorb$CP=ProvinciaCP(dades_subset_nopertorb$CP)
 dades_subset_pertorb$CP=as.numeric(dades_subset_pertorb$CP)
 
@@ -85,16 +83,19 @@ GeneralitzarOcupacio <- function(Ocupacio) {
 dades_subset_pertorb$Ocupacio = GeneralitzarOcupacio(dades_subset_pertorb$Ocupacio)
 
 #NO TOCAR LA PROB DE HIPOTECA, ES LO PRINCIPAL DE ESTE DATA SET E INTERESA QUE SEA UN DATO VERIDICO
-#TODO MICROAGREGACION CON LOS HIJOS Y NIVEL DE ESTUDIOS
+microa_mv <- microaggregation(dades_subset_pertorb, variables = c("NumFills","NivellEstudis") , aggr = 3, method = "mdav")
+dades_subset_pertorb$NumFills = round(microa_mv$mx$NumFills)
+dades_subset_pertorb$NivellEstudis = round(microa_mv$mx$NivellEstudis)
 
 # Fem rank swapping amb l'edat
 dades_subset_pertorb <- rankSwap(dades_subset_pertorb,'Edat',P=10)
 # Afegim soroll al salari
-sou_soroll <- addNoise(dades_subset_pertorb,'Salari',5)
-dades_subset_pertorb$Salari = sou_soroll$xm
+sou_soroll <- addNoise(dades_subset_pertorb,'Salari',10)
+dades_subset_pertorb$Salari = round(sou_soroll$xm)
 
 # Calcul de la utilitat extraer valores no numericos
-dades_subset_nopertorb_nonumeric <-dades_subset_nopertorb[,c(2,3,4,5,7,8)]
-dades_subset_pertorb_nonumeric <-dades_subset_pertorb[,c(2,3,4,5,7,8)]
+dades_subset_nopertorb_nonumeric <-dades_subset_nopertorb[,c(2,3,4,5,7)]
+dades_subset_nopertorb_nonumeric$CP = as.numeric(dades_subset_nopertorb_nonumeric$CP)
+dades_subset_pertorb_nonumeric <-dades_subset_pertorb[,c(2,3,4,5,7)]
 dUtility(obj=dades_subset_nopertorb_nonumeric, xm=dades_subset_pertorb_nonumeric)
 dRisk(obj=dades_subset_pertorb_nonumeric, xm=dades_subset_pertorb_nonumeric)
