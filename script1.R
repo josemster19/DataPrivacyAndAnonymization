@@ -9,7 +9,7 @@ install.packages("sdcMicro")
 library(sdcMicro)
 
 # Carregar les dades (Compte amb el path, en windows es diferent)
-dades <- read.csv(file = "~/UNIVERSIDAD/3r Curso/2Semestre/GIS/Practica/Practica2/GIS/data/salaris.csv", header=TRUE, sep=",", colClasses = c("CP"="character"))
+dades <- read.csv(file = "~/Universidad/3ro/2do Semestre/GIS/GIS/data/salaris.csv", header=TRUE, sep=",", colClasses = c("CP"="character"))
 
 # Mostra de les dades
 colnames(dades)
@@ -132,12 +132,6 @@ hist(microa$mx$Salari, main="Histograma Salari univariant",xlab="Salari",ylab="F
 hist(microa_mv$mx$Salari, main="Histograma Salari multivariant",xlab="Salari",ylab="Freqüència")
 
 # Calcul de la utilitat per a l'edat univariant
-dUtility(obj=dades_subset_comparar, xm=microa$mx)
-
-# Multivariant
-dUtility(obj=dades_subset_comparar, xm=microa_mv$mx)
-
-# Calcul de la utilitat per al salari univariant
 dUtility(obj=dades_subset_comparar, xm=microa$mx)
 
 # Multivariant

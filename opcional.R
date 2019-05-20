@@ -9,12 +9,12 @@ install.packages("sdcMicro")
 library(sdcMicro)
 
 # Carregar les dades (Compte amb el path, en windows es diferent)
-dades <- read.csv(file = "~/UNIVERSIDAD/3r Curso/2Semestre/GIS/Practica/Practica2/GIS/data/hipoteca.csv", header=TRUE, sep=",", colClasses = c("CP"="character"))
+dades <- read.csv(file = "~/Universidad/3ro/2do Semestre/GIS/GIS/data/hipoteca.csv", header=TRUE, sep=",", colClasses = c("CP"="character"))
 
 # Apartat b
 # Primer eliminem els identificadors
 dades_subset_nopertorb = dades[,c(2,4,5,6,7,8,9,10)]
-
+dades_subset_pertorb=dades_subset_nopertorb
 # Generalitzem el CP
 ProvinciaCP <- function(CP) {
   CP = substr(CP,1,2)
@@ -92,6 +92,7 @@ dades_subset_pertorb <- rankSwap(dades_subset_pertorb,'Edat',P=10)
 # Afegim soroll al salari
 sou_soroll <- addNoise(dades_subset_pertorb,'Salari',10)
 dades_subset_pertorb$Salari = round(sou_soroll$xm)
+
 
 # Calcul de la utilitat extraer valores no numericos
 dades_subset_nopertorb_nonumeric <-dades_subset_nopertorb[,c(2,3,4,5,7)]
