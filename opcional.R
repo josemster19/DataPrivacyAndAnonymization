@@ -83,20 +83,27 @@ GeneralitzarOcupacio <- function(Ocupacio) {
 dades_subset_pertorb$Ocupacio = GeneralitzarOcupacio(dades_subset_pertorb$Ocupacio)
 
 #NO TOCAR LA PROB DE HIPOTECA, ES LO PRINCIPAL DE ESTE DATA SET E INTERESA QUE SEA UN DATO VERIDICO
-microa_mv <- microaggregation(dades_subset_pertorb, variables = c("NumFills","NivellEstudis") , aggr = 3, method = "mdav")
+microa_mv <- microaggregation(dades_subset_pertorb, variables = c("NumFills","NivellEstudis") , aggr = 5, method = "mdav")
 dades_subset_pertorb$NumFills = round(microa_mv$mx$NumFills)
 dades_subset_pertorb$NivellEstudis = round(microa_mv$mx$NivellEstudis)
 
 # Fem rank swapping amb l'edat
 dades_subset_pertorb <- rankSwap(dades_subset_pertorb,'Edat',P=10)
+edat_soroll <- addNoise(dades_subset_pertorb,'Edat',10)
+dades_subset_pertorb$Edat = round(edat_soroll$xm)
 # Afegim soroll al salari
-sou_soroll <- addNoise(dades_subset_pertorb,'Salari',10)
+sou_soroll <- addNoise(dades_subset_pertorb,'Salari',15)
 dades_subset_pertorb$Salari = round(sou_soroll$xm)
+
+#Microa eedat salari
+microa_mv <- microaggregation(dades_subset_pertorb, variables = c("Edat","Salari") , aggr = 5, method = "mdav")
+dades_subset_pertorb$Edat = round(microa_mv$mx$Edat)
+dades_subset_pertorb$Salari = round(microa_mv$mx$Salari)
 
 
 # Calcul de la utilitat extraer valores no numericos
-dades_subset_nopertorb_nonumeric <-dades_subset_nopertorb[,c(2,3,4,5,7)]
+dades_subset_nopertorb_nonumeric <-dades_subset_nopertorb[,c(2,3,4,5,7,8)]
 dades_subset_nopertorb_nonumeric$CP = as.numeric(dades_subset_nopertorb_nonumeric$CP)
-dades_subset_pertorb_nonumeric <-dades_subset_pertorb[,c(2,3,4,5,7)]
+dades_subset_pertorb_nonumeric <-dades_subset_pertorb[,c(2,3,4,5,7,8)]
 dUtility(obj=dades_subset_nopertorb_nonumeric, xm=dades_subset_pertorb_nonumeric)
-dRisk(obj=dades_subset_pertorb_nonumeric, xm=dades_subset_pertorb_nonumeric)
+dRisk(obj=dades_subset_nopertorb_nonumeric, xm=dades_subset_pertorb_nonumeric)
