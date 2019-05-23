@@ -9,7 +9,7 @@ install.packages("sdcMicro")
 library(sdcMicro)
 
 # Carregar les dades (Compte amb el path, en windows es diferent)
-dades <- read.csv(file = "~/Universidad/3ro/2do Semestre/GIS/GIS/data/salaris.csv", header=TRUE, sep=",", colClasses = c("CP"="character"))
+dades <- read.csv(file = "~/UNIVERSIDAD/3r Curso/2Semestre/GIS/Practica/Practica2/GIS/data/salaris.csv", header=TRUE, sep=",", colClasses = c("CP"="character"))
 
 # Mostra de les dades
 colnames(dades)
@@ -158,8 +158,14 @@ ProvinciaCP <- function(CP) {
 }
 
 # Creem un nou data frame i generalitzem el CP
-CPGeneralitzat <- dades_subset[,c(2,3)]
-CPGeneralitzat$CP=ProvinciaCP(dades_subset$CP)
+dades.CPGeneralitzat = dades_subset_comparar
+dades.CPGeneralitzat$CP=as.numeric(ProvinciaCP(dades_subset$CP))
+
+#dutility
+dUtility(obj=dades_subset_comparar, xm=dades.CPGeneralitzat)
+#drisk
+dRisk(obj = dades_subset_comparar, xm=dades.CPGeneralitzat)
+
 
 # Creem la funció d'abans pero modificada per si hi ha un registre únic camuflarlo
 ProvinciaCPValorsUnics <- function(CP) {
@@ -174,8 +180,14 @@ ProvinciaCPValorsUnics <- function(CP) {
 }
 
 # Creem un nou data frame i generalitzem el CP
-CPGeneralitzatValorsUnics <- dades_subset[,c(2,3)]
-CPGeneralitzatValorsUnics$CP=ProvinciaCPValorsUnics(dades_subset$CP)
+dades.CPGeneralitzatValorsUnics = dades_subset
+dades.CPGeneralitzatValorsUnics$CP=as.numeric(ProvinciaCPValorsUnics(dades_subset$CP))
+
+#dutility
+dUtility(obj=dades_subset_comparar, xm=dades.CPGeneralitzatValorsUnics)
+#drisk
+dRisk(obj = dades_subset_comparar, xm=dades.CPGeneralitzatValorsUnics)
+
 
 #Exercici 9
 names <- c("AN", "RS", "MA one", "MA mul")

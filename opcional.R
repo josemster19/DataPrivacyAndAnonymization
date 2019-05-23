@@ -9,7 +9,7 @@ install.packages("sdcMicro")
 library(sdcMicro)
 
 # Carregar les dades (Compte amb el path, en windows es diferent)
-dades <- read.csv(file = "~/Universidad/3ro/2do Semestre/GIS/GIS/data/hipoteca.csv", header=TRUE, sep=",", colClasses = c("CP"="character"))
+dades <- read.csv(file = "~/UNIVERSIDAD/3r Curso/2Semestre/GIS/Practica/Practica2/GIS/data/hipoteca.csv", header=TRUE, sep=",", colClasses = c("CP"="character"))
 
 # Apartat b
 # Primer eliminem els identificadors
@@ -87,7 +87,7 @@ microa_mv <- microaggregation(dades_subset_pertorb, variables = c("NumFills","Ni
 dades_subset_pertorb$NumFills = round(microa_mv$mx$NumFills)
 dades_subset_pertorb$NivellEstudis = round(microa_mv$mx$NivellEstudis)
 
-# Fem rank swapping amb l'edat
+# Fem rank swapping amb l'edat i afegim soroll
 dades_subset_pertorb <- rankSwap(dades_subset_pertorb,'Edat',P=10)
 edat_soroll <- addNoise(dades_subset_pertorb,'Edat',10)
 dades_subset_pertorb$Edat = round(edat_soroll$xm)
